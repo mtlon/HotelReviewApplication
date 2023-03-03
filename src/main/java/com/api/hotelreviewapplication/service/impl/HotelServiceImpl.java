@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 @Service
 public class HotelServiceImpl implements HotelService {
     private HotelRepository hotelRepository;
-    
+
     @Autowired
     public HotelServiceImpl(HotelRepository hotelRepository) {
         this.hotelRepository = hotelRepository;
