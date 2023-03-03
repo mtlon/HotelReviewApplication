@@ -24,6 +24,7 @@ public class HotelServiceImpl implements HotelService {
         List<Hotel> hotels = hotelRepository.findAll();
         return hotels.stream().map(p -> mapToDto(p)).collect(Collectors.toList());
     }
+
     private HotelDto mapToDto(Hotel hotel) {
         HotelDto hotelDTO = new HotelDto();
         hotelDTO.setId(hotel.getId());
