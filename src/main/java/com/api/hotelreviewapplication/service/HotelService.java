@@ -9,4 +9,5 @@ public interface HotelService {
     List<HotelDto> getAllHotels();
     HotelDto createHotel(HotelDto hotelDto);
     HotelDto updateHotel(HotelDto hotelDto, int id);
+    void deleteHotel(int id);
 }

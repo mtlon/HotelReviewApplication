@@ -32,4 +32,9 @@ public class HotelController {
         HotelDto updatedHotel = hotelService.updateHotel(hotelDto, id);
         return new ResponseEntity<>(updatedHotel, HttpStatus.OK);
     }
+    @DeleteMapping("/hotel/delete/{id}")
+    private ResponseEntity<String> deleteHotel(@PathVariable("id") int id) {
+        hotelService.deleteHotel(id);
+        return new ResponseEntity<>("Hotel deleted successfully", HttpStatus.OK);
+    }
 }
