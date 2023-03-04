@@ -38,7 +38,16 @@ public class HotelServiceImpl implements HotelService {
         hotelDto.setId(newHotel.getId());
         return hotelDto;
     }
+    @Override
+    public HotelDto updateHotel(HotelDto hotelDto, int id) {
+        Hotel hotel = hotelRepository.findById(id).orElseThrow(()-> new HotelNotFoundException("Hotel was not found"));
+        hotel.setName(hotelDto.getName());
+        hotel.setCity(hotelDto.getCity());
+        hotel.setNumberOfRooms(hotelDto.getNumberOfRooms());
+        hotelRepository.save(hotel);
 
+        return mapToDto(hotel);
+    }
     private HotelDto mapToDto(Hotel hotel) {
         HotelDto hotelDTO = new HotelDto();
         hotelDTO.setId(hotel.getId());

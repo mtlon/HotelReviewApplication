@@ -27,4 +27,9 @@ public class HotelController {
     private ResponseEntity<HotelDto> createHotel(@RequestBody HotelDto hotelDto) {
         return new ResponseEntity<>(hotelService.createHotel(hotelDto), HttpStatus.CREATED);
     }
+    @PutMapping("/hotel/update/{id}")
+    private ResponseEntity<HotelDto> updateHotel(@RequestBody HotelDto hotelDto, @PathVariable("id") int id) {
+        HotelDto updatedHotel = hotelService.updateHotel(hotelDto, id);
+        return new ResponseEntity<>(updatedHotel, HttpStatus.OK);
+    }
 }
