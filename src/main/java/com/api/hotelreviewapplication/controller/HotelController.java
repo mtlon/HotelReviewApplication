@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class HotelController {
     private HotelService hotelService;
-
     @Autowired
     public HotelController(HotelService hotelService) {
         this.hotelService = hotelService;

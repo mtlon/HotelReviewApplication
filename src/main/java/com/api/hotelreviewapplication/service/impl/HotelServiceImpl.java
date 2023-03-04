@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Service
 public class HotelServiceImpl implements HotelService {
     private HotelRepository hotelRepository;
@@ -43,7 +42,6 @@ public class HotelServiceImpl implements HotelService {
 
         return hotelResponse;
     }
-
     @Override
     public HotelDto createHotel(HotelDto hotelDto) {
         Hotel hotel = new Hotel();
