@@ -1,6 +1,5 @@
 package com.api.hotelreviewapplication.repository;
 
-import com.api.hotelreviewapplication.dto.HotelDto;
 import com.api.hotelreviewapplication.model.Hotel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

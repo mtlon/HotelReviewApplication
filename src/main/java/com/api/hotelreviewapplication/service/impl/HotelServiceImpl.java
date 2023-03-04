@@ -1,16 +1,20 @@
 package com.api.hotelreviewapplication.service.impl;
 
 import com.api.hotelreviewapplication.dto.HotelDto;
-import com.api.hotelreviewapplication.exception.GlobalExceptionHandler;
+import com.api.hotelreviewapplication.dto.HotelResponse;
 import com.api.hotelreviewapplication.exception.HotelNotFoundException;
 import com.api.hotelreviewapplication.model.Hotel;
 import com.api.hotelreviewapplication.repository.HotelRepository;
 import com.api.hotelreviewapplication.service.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 
 @Service
 public class HotelServiceImpl implements HotelService {
@@ -22,9 +26,22 @@ public class HotelServiceImpl implements HotelService {
     }
 
     @Override
-    public List<HotelDto> getAllHotels() {
-        List<Hotel> hotels = hotelRepository.findAll();
-        return hotels.stream().map(p -> mapToDto(p)).collect(Collectors.toList());
+    public HotelResponse getAllHotels(int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Hotel> hotels = hotelRepository.findAll(pageable);
+
+        List<Hotel> listOfHotels = hotels.getContent();
+        List<HotelDto> content = listOfHotels.stream().map(p -> mapToDto(p)).collect(Collectors.toList());
+
+        HotelResponse hotelResponse = new HotelResponse();
+        hotelResponse.setContent(content);
+        hotelResponse.setPageNo(hotels.getNumber());
+        hotelResponse.setPageSize(hotels.getSize());
+        hotelResponse.setTotalElements(hotels.getTotalElements());
+        hotelResponse.setTotalPages(hotels.getTotalPages());
+        hotelResponse.setLast(hotels.isLast());
+
+        return hotelResponse;
     }
 
     @Override
