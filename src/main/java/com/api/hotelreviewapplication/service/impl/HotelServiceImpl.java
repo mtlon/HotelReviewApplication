@@ -1,6 +1,8 @@
 package com.api.hotelreviewapplication.service.impl;
 
 import com.api.hotelreviewapplication.dto.HotelDto;
+import com.api.hotelreviewapplication.exception.GlobalExceptionHandler;
+import com.api.hotelreviewapplication.exception.HotelNotFoundException;
 import com.api.hotelreviewapplication.model.Hotel;
 import com.api.hotelreviewapplication.repository.HotelRepository;
 import com.api.hotelreviewapplication.service.HotelService;
@@ -23,6 +25,18 @@ public class HotelServiceImpl implements HotelService {
     public List<HotelDto> getAllHotels() {
         List<Hotel> hotels = hotelRepository.findAll();
         return hotels.stream().map(p -> mapToDto(p)).collect(Collectors.toList());
+    }
+
+    @Override
+    public HotelDto createHotel(HotelDto hotelDto) {
+        Hotel hotel = new Hotel();
+        hotel.setName(hotelDto.getName());
+        hotel.setCity(hotelDto.getCity());
+        hotel.setNumberOfRooms(hotelDto.getNumberOfRooms());
+        Hotel newHotel = hotelRepository.save(hotel);
+
+        hotelDto.setId(newHotel.getId());
+        return hotelDto;
     }
 
     private HotelDto mapToDto(Hotel hotel) {
