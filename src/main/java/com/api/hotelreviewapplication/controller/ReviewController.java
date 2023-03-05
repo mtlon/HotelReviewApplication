@@ -1,14 +1,17 @@
 package com.api.hotelreviewapplication.controller;
 
 import com.api.hotelreviewapplication.dto.ReviewDto;
+import com.api.hotelreviewapplication.model.Review;
 import com.api.hotelreviewapplication.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/review")
+@RequestMapping("/api/")
 public class ReviewController {
     private ReviewService reviewService;
 
@@ -16,8 +19,17 @@ public class ReviewController {
     public ReviewController(ReviewService reviewService) {
         this.reviewService = reviewService;
     }
-
-    @PostMapping("/hotel/{id}")
+    @GetMapping("hotel/{id}/reviews")
+    public ResponseEntity<List<ReviewDto>> getReviewByHotelId(@PathVariable("id") int hotelId) {
+        List<ReviewDto> reviewList = reviewService.getReviewByHotelId(hotelId);
+        return new ResponseEntity<>(reviewList, HttpStatus.OK);
+    }
+    @GetMapping("hotel/{id}/reviews/{reviewId}")
+    public  ResponseEntity<ReviewDto> getReviewById(@PathVariable("id") int hotelId, @PathVariable("reviewId") int reviewId) {
+        ReviewDto reviewDto = reviewService.getReviewById(hotelId, reviewId);
+        return new ResponseEntity<>(reviewDto, HttpStatus.OK);
+    }
+    @PostMapping("/hotel/{id}/reviews")
     public ResponseEntity<ReviewDto> createReview(@RequestBody ReviewDto reviewDto, @PathVariable("id") int hotelId) {
         return new ResponseEntity<>(reviewService.createReview(reviewDto, hotelId), HttpStatus.CREATED);
     }
