@@ -1,6 +1,7 @@
 package com.api.hotelreviewapplication.service.impl;
 
 import com.api.hotelreviewapplication.dto.ReviewDto;
+
 import com.api.hotelreviewapplication.exception.HotelNotFoundException;
 import com.api.hotelreviewapplication.exception.ReviewNotFoundException;
 import com.api.hotelreviewapplication.model.Hotel;
@@ -44,7 +45,7 @@ public class ReviewServiceImpl implements ReviewService {
             .orElseThrow(()-> new HotelNotFoundException("Hotel was not found"));
 
     Review review = reviewRepository.findById(reviewId)
-            .orElseThrow(() -> new RuntimeException("Review was not found"));
+            .orElseThrow(() -> new ReviewNotFoundException("Review was not found"));
 
       if (!review.getHotel().equals(hotel)) {
           throw new ReviewNotFoundException("This review doesn't belong to this hotel");
@@ -68,6 +69,27 @@ public class ReviewServiceImpl implements ReviewService {
 
         return mapToDto(newReview );
     }
+
+    @Override
+    public ReviewDto updateReview(ReviewDto reviewDto, int hotelId, int reviewId) {
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(()-> new HotelNotFoundException("Hotel was not found"));
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewNotFoundException("Review was not found"));
+
+        if (!review.getHotel().equals(hotel)) {
+            throw new ReviewNotFoundException("Review with ID " + reviewId + " doesn't belong to hotel with ID " + hotelId);
+        }
+
+        review.setTitle(reviewDto.getTitle());
+        review.setContent(reviewDto.getContent());
+        review.setStars(reviewDto.getStars());
+
+        Review updatedReview = reviewRepository.save(review);
+        return mapToDto(updatedReview);
+    }
+
     private ReviewDto mapToDto(Review review) {
         ReviewDto reviewDto = new ReviewDto();
         reviewDto.setId(review.getId());

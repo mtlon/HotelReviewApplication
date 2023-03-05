@@ -8,4 +8,5 @@ public interface ReviewService {
     List<ReviewDto> getReviewByHotelId(int hotelId);
     ReviewDto getReviewById(int hotelId, int reviewId);
     ReviewDto createReview (ReviewDto reviewDto, int hotelId);
+    ReviewDto updateReview(ReviewDto reviewDto, int hotelId, int reviewId);
 }

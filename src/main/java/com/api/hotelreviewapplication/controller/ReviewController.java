@@ -1,7 +1,6 @@
 package com.api.hotelreviewapplication.controller;
 
 import com.api.hotelreviewapplication.dto.ReviewDto;
-import com.api.hotelreviewapplication.model.Review;
 import com.api.hotelreviewapplication.service.ReviewService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -31,6 +30,12 @@ public class ReviewController {
     }
     @PostMapping("/hotel/{id}/reviews")
     public ResponseEntity<ReviewDto> createReview(@RequestBody ReviewDto reviewDto, @PathVariable("id") int hotelId) {
-        return new ResponseEntity<>(reviewService.createReview(reviewDto, hotelId), HttpStatus.CREATED);
+        ReviewDto review = reviewService.createReview(reviewDto, hotelId);
+        return new ResponseEntity<>(review, HttpStatus.CREATED);
+    }
+    @PutMapping("hotel/{id}/reviews/{reviewId}")
+    public ResponseEntity<ReviewDto> updateReview(@RequestBody ReviewDto reviewDto, @PathVariable("id") int id, @PathVariable("reviewId") int reviewId) {
+        ReviewDto review = reviewService.updateReview(reviewDto, id, reviewId);
+        return new ResponseEntity<>(review, HttpStatus.OK);
     }
 }
