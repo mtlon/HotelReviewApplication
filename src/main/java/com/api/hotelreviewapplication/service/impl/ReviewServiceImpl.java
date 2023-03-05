@@ -90,6 +90,21 @@ public class ReviewServiceImpl implements ReviewService {
         return mapToDto(updatedReview);
     }
 
+    @Override
+    public void deleteReview(int hotelId, int reviewId) {
+        Hotel hotel = hotelRepository.findById(hotelId)
+                .orElseThrow(()-> new HotelNotFoundException("Hotel was not found"));
+
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewNotFoundException("Review was not found"));
+
+        if (!review.getHotel().equals(hotel)) {
+            throw new ReviewNotFoundException("This review doesn't belong to this hotel");
+        }
+
+        reviewRepository.deleteById(review.getId());
+    }
+
     private ReviewDto mapToDto(Review review) {
         ReviewDto reviewDto = new ReviewDto();
         reviewDto.setId(review.getId());
