@@ -2,6 +2,7 @@ package com.api.hotelreviewapplication.controller;
 
 import com.api.hotelreviewapplication.dto.LoginDto;
 import com.api.hotelreviewapplication.dto.RegisterDto;
+import com.api.hotelreviewapplication.model.Role;
 import com.api.hotelreviewapplication.model.UserEntity;
 import com.api.hotelreviewapplication.repository.PermissionRepository;
 import com.api.hotelreviewapplication.repository.RoleRepository;
@@ -17,9 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.management.relation.Role;
-
 
 @RestController
 @RequestMapping("/api/auth")
@@ -49,13 +47,9 @@ public class AuthController {
         UserEntity user = new UserEntity();
         user.setUsername(registerDto.getUsername());
         user.setPassword(passwordEncoder.encode(registerDto.getPassword()));
-
-        Role userRole = roleRepository.findByName("USER")
-                .orElseThrow(() -> new RuntimeException("USER role not found!"));
-
-        user.setRole(userRole);
+        Role roles = roleRepository.findById(3);
+        user.setRole(roles);
         userRepository.save(user);
-
         return new ResponseEntity<>("User registered success!", HttpStatus.OK);
     }
 
