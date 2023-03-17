@@ -18,7 +18,6 @@ public class HotelController {
         this.hotelService = hotelService;
     }
     @GetMapping("/hotels")
-    @PreAuthorize("permitAll()")
     public ResponseEntity<HotelResponse> getAllHotels(
             @RequestParam(defaultValue = "0") int pageNo,
             @RequestParam(defaultValue = "5") int pageSize) {
@@ -27,18 +26,15 @@ public class HotelController {
     }
     @PostMapping("/hotel/create")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODEREATOR')")
     public ResponseEntity<HotelDto> createHotel(@RequestBody HotelDto hotelDto) {
         return new ResponseEntity<>(hotelService.createHotel(hotelDto), HttpStatus.CREATED);
     }
     @PutMapping("/hotel/update/{id}")
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_MODEREATOR')")
     public ResponseEntity<HotelDto> updateHotel(@RequestBody HotelDto hotelDto, @PathVariable("id") int id) {
         HotelDto updatedHotel = hotelService.updateHotel(hotelDto, id);
         return new ResponseEntity<>(updatedHotel, HttpStatus.OK);
     }
     @DeleteMapping("/hotel/delete/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> deleteHotel(@PathVariable("id") int id) {
         hotelService.deleteHotel(id);
         return new ResponseEntity<>("Hotel deleted successfully", HttpStatus.OK);

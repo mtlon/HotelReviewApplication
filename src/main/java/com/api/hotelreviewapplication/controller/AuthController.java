@@ -53,7 +53,7 @@ public class AuthController {
         return new ResponseEntity<>("User registered success!", HttpStatus.OK);
     }
 
-    @PostMapping("login")
+    @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto){
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
