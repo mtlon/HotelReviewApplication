@@ -65,7 +65,7 @@ public class HotelServiceImpl implements HotelService {
 
     @Override
     public void deleteHotel(int id) {
-        Hotel hotel = hotelRepository.findById(id).orElseThrow(()-> new HotelNotFoundException("Hotel was not found"));
+        hotelRepository.findById(id).orElseThrow(()-> new HotelNotFoundException("Hotel was not found"));
         hotelRepository.deleteById(id);
     }
 

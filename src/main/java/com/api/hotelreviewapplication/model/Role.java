@@ -1,20 +1,15 @@
 package com.api.hotelreviewapplication.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Data
-@Getter
-@Setter
 @Table(name = "roles")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Role {
     @Id
     @Column(name = "role_id")
