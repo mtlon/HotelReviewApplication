@@ -10,6 +10,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -30,8 +31,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .cors()
-                .and()
                 .csrf().disable()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/v1/auth/*").permitAll()
@@ -48,7 +47,10 @@ public class SecurityConfig {
                 .and()
                     .authenticationProvider(authenticationProvider)
                     .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .httpBasic();
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .addLogoutHandler(new SecurityContextLogoutHandler())
+                );
 
         return http.build();
     }

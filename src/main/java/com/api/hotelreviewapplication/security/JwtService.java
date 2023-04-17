@@ -5,6 +5,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
@@ -28,22 +30,33 @@ public class JwtService {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
-    public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap<>(), userDetails);
-    }
-    private String generateToken(
-            Map<String, Object> extraClaims,
-            UserDetails userDetails
-    ) {
-        return Jwts
-                .builder()
-                .setClaims(extraClaims)
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(currentDate)
+    public String generateTokenn(Authentication authentication) {
+        String username = authentication.getName();
+
+        String token = Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(new Date())
                 .setExpiration(expireDate)
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
+        return token;
     }
+//    public String generateToken(UserDetails userDetails) {
+//        return generateToken(new HashMap<>(), userDetails);
+//    }
+//    private String generateToken(
+//            Map<String, Object> extraClaims,
+//            UserDetails userDetails
+//    ) {
+//        return Jwts
+//                .builder()
+//                .setClaims(extraClaims)
+//                .setSubject(userDetails.getUsername())
+//                .setIssuedAt(currentDate)
+//                .setExpiration(expireDate)
+//                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+//                .compact();
+//    }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(extractUsername(token));
@@ -62,6 +75,19 @@ public class JwtService {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
+    }
+    public boolean validateToken(String token) {
+        try {
+            Jwts
+                .parserBuilder()
+                .setSigningKey(getSignInKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+            return true;
+        } catch (Exception ex) {
+            throw new AuthenticationCredentialsNotFoundException("JWT was expired or incorrect");
+        }
     }
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
@@ -94,6 +120,5 @@ public class JwtService {
 //                .parseClaimsJws(token)
 //                .getBody();
 //    }
-
 
 }

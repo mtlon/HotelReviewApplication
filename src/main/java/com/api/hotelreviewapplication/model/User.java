@@ -1,7 +1,5 @@
 package com.api.hotelreviewapplication.model;
 
-
-import com.api.hotelreviewapplication.Token.Token;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,21 +34,9 @@ public class User implements UserDetails {
     )
     private Role role;
 
-    @OneToMany(mappedBy = "user")
-    private List<Token> tokens;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.getName()));
-    }
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
     }
 
     @Override

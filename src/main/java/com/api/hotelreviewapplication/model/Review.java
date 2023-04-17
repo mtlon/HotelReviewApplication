@@ -22,4 +22,7 @@ public class Review {
     @ManyToOne
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }

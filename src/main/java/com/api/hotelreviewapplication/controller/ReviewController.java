@@ -35,13 +35,13 @@ public class ReviewController {
         return new ResponseEntity<>(review, HttpStatus.CREATED);
     }
     @PutMapping("hotel/{id}/review/{reviewId}")
-    @PreAuthorize("hasAnyRole('MODERATOR', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR', 'USER')")
     public ResponseEntity<ReviewDto> updateReview(@RequestBody ReviewDto reviewDto, @PathVariable("id") int id, @PathVariable("reviewId") int reviewId) {
         ReviewDto review = reviewService.updateReview(reviewDto, id, reviewId);
         return new ResponseEntity<>(review, HttpStatus.OK);
     }
     @DeleteMapping("hotel/{id}/review/{reviewId}")
-    @PreAuthorize("hasAnyRole('MODERATOR', 'ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR', 'USER')")
     public ResponseEntity<String> deleteReviewById(@PathVariable("id") int hotelId, @PathVariable("reviewId") int reviewId) {
         reviewService.deleteReview(hotelId, reviewId);
         return new ResponseEntity<>("Review with ID " + reviewId + " deleted successfully.", HttpStatus.OK);

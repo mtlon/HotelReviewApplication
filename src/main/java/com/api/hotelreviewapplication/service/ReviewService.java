@@ -10,5 +10,4 @@ public interface ReviewService {
     ReviewDto createReview (ReviewDto reviewDto, int hotelId);
     ReviewDto updateReview(ReviewDto reviewDto, int hotelId, int reviewId);
     void deleteReview (int hotelId, int reviewId);
-
 }

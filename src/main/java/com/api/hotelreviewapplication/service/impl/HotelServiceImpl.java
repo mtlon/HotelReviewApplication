@@ -22,7 +22,6 @@ public class HotelServiceImpl implements HotelService {
     public HotelServiceImpl(HotelRepository hotelRepository) {
         this.hotelRepository = hotelRepository;
     }
-
     @Override
     public HotelResponse getAllHotels(int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
@@ -41,6 +40,7 @@ public class HotelServiceImpl implements HotelService {
 
         return hotelResponse;
     }
+
     @Override
     public HotelDto createHotel(HotelDto hotelDto) {
         Hotel hotel = new Hotel();
@@ -68,7 +68,6 @@ public class HotelServiceImpl implements HotelService {
         hotelRepository.findById(id).orElseThrow(()-> new HotelNotFoundException("Hotel was not found"));
         hotelRepository.deleteById(id);
     }
-
     private HotelDto mapToDto(Hotel hotel) {
         HotelDto hotelDTO = new HotelDto();
         hotelDTO.setId(hotel.getId());
@@ -76,13 +75,5 @@ public class HotelServiceImpl implements HotelService {
         hotelDTO.setCity(hotel.getCity());
         hotelDTO.setNumberOfRooms(hotel.getNumberOfRooms());
         return hotelDTO;
-    }
-    private Hotel mapToEntity(HotelDto hotelDTO) {
-        Hotel hotel = new Hotel();
-        hotel.setId(hotelDTO.getId());
-        hotel.setName(hotelDTO.getName());
-        hotel.setCity(hotelDTO.getCity());
-        hotel.setNumberOfRooms(hotelDTO.getNumberOfRooms());
-        return hotel;
     }
 }
