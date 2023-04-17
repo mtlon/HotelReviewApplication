@@ -1,7 +1,7 @@
 package com.api.hotelreviewapplication.controller;
 
 import com.api.hotelreviewapplication.dto.HotelDto;
-import com.api.hotelreviewapplication.dto.HotelResponse;
+import com.api.hotelreviewapplication.dto.HotelResponseDto;
 import com.api.hotelreviewapplication.service.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,11 +18,16 @@ public class HotelController {
         this.hotelService = hotelService;
     }
     @GetMapping("/hotels")
-    public ResponseEntity<HotelResponse> getAllHotels(
+    public ResponseEntity<HotelResponseDto> getAllHotels(
             @RequestParam(defaultValue = "0") int pageNo,
             @RequestParam(defaultValue = "20") int pageSize) {
-        HotelResponse hotelResponse = hotelService.getAllHotels(pageNo, pageSize);
+        HotelResponseDto hotelResponse = hotelService.getAllHotels(pageNo, pageSize);
         return ResponseEntity.ok(hotelResponse);
+    }
+    @GetMapping("/hotel/{id}")
+    public ResponseEntity<HotelDto> getHotelByID(@PathVariable("id") int id) {
+        HotelDto getHotelById = hotelService.getHotelByID(id);
+        return new ResponseEntity<>(getHotelById, HttpStatus.OK);
     }
     @PostMapping("/hotel/create")
     @ResponseStatus(HttpStatus.CREATED)

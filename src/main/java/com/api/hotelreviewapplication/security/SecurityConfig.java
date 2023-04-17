@@ -3,6 +3,7 @@ package com.api.hotelreviewapplication.security;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,7 +11,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
 @Configuration
 @EnableWebSecurity
@@ -23,21 +23,22 @@ public class SecurityConfig {
     public SecurityConfig(JwtAuthEntryPoint jwtAuthEntryPoint,
                           JwtAuthenticationFilter jwtAuthFilter,
                           AuthenticationProvider authenticationProvider) {
-        this.jwtAuthEntryPoint = jwtAuthEntryPoint;
         this.jwtAuthFilter = jwtAuthFilter;
+        this.jwtAuthEntryPoint = jwtAuthEntryPoint;
         this.authenticationProvider = authenticationProvider;
     }
-
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers("/api/v1/auth/*").permitAll()
-                .requestMatchers("/api/hotels").permitAll()
-                .requestMatchers("/api/review/***").permitAll()
-                .requestMatchers("/register").permitAll()
-                .requestMatchers("/login").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/hotels").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/hotel/*").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/review/*").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/hotel/*/review/*").permitAll()
+                .requestMatchers(HttpMethod.DELETE, "/api/hotel/*/review/*").permitAll()
+                .requestMatchers(HttpMethod.POST,"/register").permitAll()
+                .requestMatchers(HttpMethod.POST,"/login").permitAll()
                     .anyRequest().authenticated()
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtAuthEntryPoint)
@@ -46,11 +47,7 @@ public class SecurityConfig {
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                     .authenticationProvider(authenticationProvider)
-                    .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .addLogoutHandler(new SecurityContextLogoutHandler())
-                );
+                    .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

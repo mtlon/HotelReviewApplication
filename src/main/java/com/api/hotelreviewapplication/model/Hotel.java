@@ -18,6 +18,7 @@ public class Hotel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(unique=true)
     private String name;
     private String city;
     private int numberOfRooms;

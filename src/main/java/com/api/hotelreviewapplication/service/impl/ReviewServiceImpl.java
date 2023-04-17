@@ -3,6 +3,7 @@ package com.api.hotelreviewapplication.service.impl;
 import com.api.hotelreviewapplication.dto.ReviewDto;
 import com.api.hotelreviewapplication.exception.HotelNotFoundException;
 import com.api.hotelreviewapplication.exception.ReviewNotFoundException;
+import com.api.hotelreviewapplication.exception.UnauthorizedException;
 import com.api.hotelreviewapplication.model.Hotel;
 import com.api.hotelreviewapplication.model.Review;
 import com.api.hotelreviewapplication.model.User;
@@ -27,11 +28,11 @@ public class ReviewServiceImpl implements ReviewService {
     private HotelRepository hotelRepository;
     private ReviewRepository reviewRepository;
     @Autowired
-    public ReviewServiceImpl(HotelRepository hotelRepository,
-                             UserRepository userRepository,
+    public ReviewServiceImpl(UserRepository userRepository,
+                             HotelRepository hotelRepository,
                              ReviewRepository reviewRepository) {
-        this.hotelRepository = hotelRepository;
         this.userRepository = userRepository;
+        this.hotelRepository = hotelRepository;
         this.reviewRepository = reviewRepository;
     }
 
@@ -41,38 +42,44 @@ public class ReviewServiceImpl implements ReviewService {
         return userRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
+    private Hotel getHotelById(int hotelId) {
+        return hotelRepository.findById(hotelId)
+                .orElseThrow(() -> new HotelNotFoundException("Hotel was not found"));
+    }
+    private Review getReviewById(int reviewId, Hotel hotel) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new ReviewNotFoundException("Review was not found"));
+
+        if (!review.getHotel().equals(hotel)) {
+            throw new ReviewNotFoundException("This review doesn't belong to this hotel");
+        }
+
+        return review;
+    }
 
     @Override
     public List<ReviewDto> getReviewByHotelId(int hotelId) {
-        Hotel hotel = hotelRepository.findById(hotelId)
-                .orElseThrow(()-> new HotelNotFoundException("Hotel was not found"));
+        Hotel hotel = getHotelById(hotelId);
 
         List<Review> reviews = hotel.getReviews();
         return reviews.stream()
-                .sorted(Comparator.comparingInt(Review::getStars).reversed())
-                .map(review -> mapToDto(review))
+                .sorted(Comparator.comparingInt(Review::getId))
+                .map(this::mapToDto)
                 .collect(Collectors.toList());
     }
     @Override
-    public ReviewDto getReviewById(int hotelID, int reviewID) {
-    Hotel hotel = hotelRepository.findById(hotelID)
-            .orElseThrow(()-> new HotelNotFoundException("Hotel was not found"));
+    public ReviewDto getReviewById(int hotelId, int reviewId) {
+        Hotel hotel = getHotelById(hotelId);
+        Review review = getReviewById(reviewId, hotel);
 
-    Review review = reviewRepository.findById(reviewID)
-            .orElseThrow(() -> new ReviewNotFoundException("Review was not found"));
-
-      if (!review.getHotel().equals(hotel)) {
-          throw new ReviewNotFoundException("This review doesn't belong to this hotel");
-      }
-      return mapToDto(review);
+        return mapToDto(review);
     }
 
     @Override
     public ReviewDto createReview(ReviewDto reviewDto, int hotelId) {
-        Hotel hotel = hotelRepository.findById(hotelId)
-                .orElseThrow(()-> new HotelNotFoundException("Hotel was not found"));
-
+        Hotel hotel = getHotelById(hotelId);
         Review review = new Review();
+
         review.setTitle(reviewDto.getTitle());
         review.setContent(reviewDto.getContent());
         review.setStars(reviewDto.getStars());
@@ -85,20 +92,13 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public ReviewDto updateReview(ReviewDto reviewDto, int hotelId, int reviewId) {
-        Hotel hotel = hotelRepository.findById(hotelId)
-                .orElseThrow(()-> new HotelNotFoundException("Hotel was not found"));
+        Hotel hotel = getHotelById(hotelId);
+        Review review = getReviewById(reviewId, hotel);
 
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ReviewNotFoundException("Review was not found"));
-
-        if (!review.getHotel().equals(hotel)) {
-            throw new ReviewNotFoundException("Review with ID " + reviewId + " doesn't belong to hotel with ID " + hotelId);
-        }
         User currentUser = getCurrentUser();
         if (!review.getUser().equals(currentUser)) {
-            System.out.println("You don't have permission to update this review");
+            throw new UnauthorizedException("You don't have permission to update this review");
         }
-
         review.setTitle(reviewDto.getTitle());
         review.setContent(reviewDto.getContent());
         review.setStars(reviewDto.getStars());
@@ -109,21 +109,13 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public void deleteReview(int hotelId, int reviewId) {
-        Hotel hotel = hotelRepository.findById(hotelId)
-                .orElseThrow(()-> new HotelNotFoundException("Hotel was not found"));
-
-        Review review = reviewRepository.findById(reviewId)
-                .orElseThrow(() -> new ReviewNotFoundException("Review was not found"));
-
-        if (!review.getHotel().equals(hotel)) {
-            throw new ReviewNotFoundException("This review doesn't belong to this hotel");
-        }
+        Hotel hotel = getHotelById(hotelId);
+        Review review = getReviewById(reviewId, hotel);
 
         User currentUser = getCurrentUser();
         if (!review.getUser().equals(currentUser)) {
-            System.out.println("You don't have permission to update this review");
+            throw new UnauthorizedException("You don't have permission to update this review");
         }
-
         reviewRepository.deleteById(review.getId());
     }
 
@@ -135,14 +127,5 @@ public class ReviewServiceImpl implements ReviewService {
         reviewDto.setStars(review.getStars());
 
         return reviewDto;
-    }
-
-    private Review mapToEntity(ReviewDto reviewDto) {
-        Review review = new Review();
-        review.setId(reviewDto.getId());
-        review.setTitle(reviewDto.getTitle());
-        review.setContent(reviewDto.getContent());
-        review.setStars(reviewDto.getStars());
-        return review;
     }
 }
