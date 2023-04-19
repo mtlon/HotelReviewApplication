@@ -1,7 +1,6 @@
 package com.api.hotelreviewapplication.service;
 
 import com.api.hotelreviewapplication.dto.UserDto;
-import com.api.hotelreviewapplication.model.User;
 
 import java.util.List;
 
