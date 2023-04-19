@@ -32,11 +32,6 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests()
-                .requestMatchers(HttpMethod.GET, "/api/hotels").permitAll()
-                .requestMatchers(HttpMethod.GET,"/api/hotel/*").permitAll()
-                .requestMatchers(HttpMethod.GET,"/api/review/*").permitAll()
-                .requestMatchers(HttpMethod.PUT, "/api/hotel/*/review/*").permitAll()
-                .requestMatchers(HttpMethod.DELETE, "/api/hotel/*/review/*").permitAll()
                 .requestMatchers(HttpMethod.POST,"/register").permitAll()
                 .requestMatchers(HttpMethod.POST,"/login").permitAll()
                     .anyRequest().authenticated()

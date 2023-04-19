@@ -18,7 +18,7 @@ public class Review {
     private int id;
     private String title;
     private String content;
-    private int stars;
+    private double stars;
     @ManyToOne
     @JoinColumn(name = "hotel_id")
     private Hotel hotel;

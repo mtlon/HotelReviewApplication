@@ -53,8 +53,13 @@ public class ReviewServiceImpl implements ReviewService {
         if (!review.getHotel().equals(hotel)) {
             throw new ReviewNotFoundException("This review doesn't belong to this hotel");
         }
-
         return review;
+    }
+    public boolean isAdminOrModerator() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN")
+                        || authority.getAuthority().equals("ROLE_MODERATOR"));
     }
 
     @Override
@@ -94,11 +99,12 @@ public class ReviewServiceImpl implements ReviewService {
     public ReviewDto updateReview(ReviewDto reviewDto, int hotelId, int reviewId) {
         Hotel hotel = getHotelById(hotelId);
         Review review = getReviewById(reviewId, hotel);
-
         User currentUser = getCurrentUser();
-        if (!review.getUser().equals(currentUser)) {
-            throw new UnauthorizedException("You don't have permission to update this review");
+
+        if (!(review.getUser().equals(currentUser) || isAdminOrModerator())) {
+            throw new UnauthorizedException("You don't have permission to delete this review");
         }
+
         review.setTitle(reviewDto.getTitle());
         review.setContent(reviewDto.getContent());
         review.setStars(reviewDto.getStars());
@@ -111,10 +117,10 @@ public class ReviewServiceImpl implements ReviewService {
     public void deleteReview(int hotelId, int reviewId) {
         Hotel hotel = getHotelById(hotelId);
         Review review = getReviewById(reviewId, hotel);
-
         User currentUser = getCurrentUser();
-        if (!review.getUser().equals(currentUser)) {
-            throw new UnauthorizedException("You don't have permission to update this review");
+
+        if (!(review.getUser().equals(currentUser) || isAdminOrModerator())) {
+            throw new UnauthorizedException("You don't have permission to delete this review");
         }
         reviewRepository.deleteById(review.getId());
     }

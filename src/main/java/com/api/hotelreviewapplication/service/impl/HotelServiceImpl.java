@@ -5,14 +5,20 @@ import com.api.hotelreviewapplication.dto.HotelResponseDto;
 import com.api.hotelreviewapplication.exception.HotelNotFoundException;
 import com.api.hotelreviewapplication.exception.UnauthorizedException;
 import com.api.hotelreviewapplication.model.Hotel;
+import com.api.hotelreviewapplication.model.User;
 import com.api.hotelreviewapplication.repository.HotelRepository;
+import com.api.hotelreviewapplication.repository.UserRepository;
 import com.api.hotelreviewapplication.service.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,9 +28,11 @@ import java.util.stream.Collectors;
 @Service
 public class HotelServiceImpl implements HotelService {
     private HotelRepository hotelRepository;
+    private UserRepository userRepository;
     @Autowired
-    public HotelServiceImpl(HotelRepository hotelRepository) {
+    public HotelServiceImpl(HotelRepository hotelRepository, UserRepository userRepository) {
         this.hotelRepository = hotelRepository;
+        this.userRepository = userRepository;
     }
     @Override
     public HotelResponseDto getAllHotels(int pageNo, int pageSize) {
@@ -75,25 +83,15 @@ public class HotelServiceImpl implements HotelService {
         hotel.setNumberOfRooms(hotelDto.getNumberOfRooms());
 
         hotelRepository.save(hotel);
-
         return mapToDto(hotel);
     }
     @Override
     public void deleteHotel(int id) {
-        try {
-            hotelRepository.deleteById(id);
-        } catch (EmptyResultDataAccessException ex) {
-            throw new HotelNotFoundException("Hotel was not found");
-        }
+        Hotel hotel = hotelRepository.findById(id)
+                .orElseThrow(()-> new HotelNotFoundException("Hotel was not found"));
+
+        hotelRepository.delete(hotel);
     }
-//    public void deleteHot(int id) {
-//        Optional<Hotel> optionalHotel = hotelRepository.findById(id);
-//        if (optionalHotel.isEmpty()) {
-//            throw new UnauthorizedException("Hotel not found");
-//        }
-//        Hotel hotel = optionalHotel.get();
-//        return mapToDto(hotel);
-//    }
     private HotelDto mapToDto(Hotel hotel) {
         HotelDto hotelDTO = new HotelDto();
         hotelDTO.setId(hotel.getId());

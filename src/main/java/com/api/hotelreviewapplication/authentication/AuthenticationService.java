@@ -1,9 +1,9 @@
 package com.api.hotelreviewapplication.authentication;
 
 import com.api.hotelreviewapplication.exception.JwtAuthenticationException;
-import com.api.hotelreviewapplication.model.Role;
+//import com.api.hotelreviewapplication.model.Role;
 import com.api.hotelreviewapplication.model.User;
-import com.api.hotelreviewapplication.repository.RoleRepository;
+//import com.api.hotelreviewapplication.repository.RoleRepository;
 import com.api.hotelreviewapplication.repository.UserRepository;
 import com.api.hotelreviewapplication.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -25,19 +25,19 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
     private AuthenticationManager authenticationManager;
     private UserRepository userRepository;
-    private RoleRepository roleRepository;
+//    private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
     private JwtService jwtService;
 
     @Autowired
     public AuthenticationService(AuthenticationManager authenticationManager,
                                  UserRepository userRepository,
-                                 RoleRepository roleRepository,
+//                                 RoleRepository roleRepository,
                                  PasswordEncoder passwordEncoder,
                                  JwtService jwtService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
-        this.roleRepository = roleRepository;
+//        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }
@@ -51,10 +51,9 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setFirstname(request.getFirstname());
         user.setLastname(request.getLastname());
-
-        Role userRole = roleRepository.findByName("ROLE_USER").get();
-        user.setRole(userRole);
+        user.setRolename("ROLE_USER");
         userRepository.save(user);
+
         return "User registered success! Now please login";
     }
 
@@ -72,7 +71,7 @@ public class AuthenticationService {
         } catch (UsernameNotFoundException ex) {
             throw new JwtAuthenticationException("User not found");
         } catch (BadCredentialsException ex) {
-            throw new JwtAuthenticationException("Invalid username/password supplied");
+            throw new JwtAuthenticationException("Invalid username or password supplied");
         }
     }
 }
