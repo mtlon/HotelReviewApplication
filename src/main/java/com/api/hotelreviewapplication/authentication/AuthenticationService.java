@@ -1,9 +1,7 @@
 package com.api.hotelreviewapplication.authentication;
 
 import com.api.hotelreviewapplication.exception.JwtAuthenticationException;
-//import com.api.hotelreviewapplication.model.Role;
 import com.api.hotelreviewapplication.model.User;
-//import com.api.hotelreviewapplication.repository.RoleRepository;
 import com.api.hotelreviewapplication.repository.UserRepository;
 import com.api.hotelreviewapplication.security.JwtService;
 import lombok.RequiredArgsConstructor;
@@ -22,19 +20,16 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
     private AuthenticationManager authenticationManager;
     private UserRepository userRepository;
-//    private RoleRepository roleRepository;
     private PasswordEncoder passwordEncoder;
     private JwtService jwtService;
 
     @Autowired
     public AuthenticationService(AuthenticationManager authenticationManager,
                                  UserRepository userRepository,
-//                                 RoleRepository roleRepository,
                                  PasswordEncoder passwordEncoder,
                                  JwtService jwtService) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
-//        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
     }

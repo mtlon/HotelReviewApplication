@@ -5,20 +5,13 @@ import com.api.hotelreviewapplication.dto.HotelResponseDto;
 import com.api.hotelreviewapplication.exception.HotelNotFoundException;
 import com.api.hotelreviewapplication.exception.UnauthorizedException;
 import com.api.hotelreviewapplication.model.Hotel;
-import com.api.hotelreviewapplication.model.User;
 import com.api.hotelreviewapplication.repository.HotelRepository;
-import com.api.hotelreviewapplication.repository.UserRepository;
 import com.api.hotelreviewapplication.service.HotelService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,11 +21,9 @@ import java.util.stream.Collectors;
 @Service
 public class HotelServiceImpl implements HotelService {
     private HotelRepository hotelRepository;
-    private UserRepository userRepository;
     @Autowired
-    public HotelServiceImpl(HotelRepository hotelRepository, UserRepository userRepository) {
+    public HotelServiceImpl(HotelRepository hotelRepository) {
         this.hotelRepository = hotelRepository;
-        this.userRepository = userRepository;
     }
     @Override
     public HotelResponseDto getAllHotels(int pageNo, int pageSize) {
