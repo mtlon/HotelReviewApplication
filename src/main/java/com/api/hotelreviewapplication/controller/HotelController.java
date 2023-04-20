@@ -3,7 +3,6 @@ package com.api.hotelreviewapplication.controller;
 import com.api.hotelreviewapplication.dto.HotelDto;
 import com.api.hotelreviewapplication.dto.HotelResponseDto;
 import com.api.hotelreviewapplication.service.HotelService;
-import jakarta.annotation.security.PermitAll;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
