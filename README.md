@@ -1,6 +1,8 @@
 # Hotel Rating Application based on Spring Boot 3.0 with JWT Implementation
-Projekt umożliwia użytkownikom dodawanie opini o hotelach. 
-Każdy zarejestrowany użytkownik ma uprawnienia użytkownika, a admin i moderator posiadają dodatkowe uprawnienia. Projekt oparty jest na JWT token, który umożliwia korzystanie z API. Przykładowy endpoint to /hotel, który umożliwia dodanie nowego hotelu (dla użytkowników z rolą admin lub moderator).
+The project enables users to submit their reviews of hotels. The database includes the data of all application users, including the 
+admin `(username: admin, password: password)` and the moderator `(username: moderator, password: password)`. Each newly registered user is assigned `user` permissions. Upon logging in, the application generates a token that allows access to individual endpoints.
+
+
 
 ## Technology
 - Java 8
@@ -22,8 +24,19 @@ To get started with this project, you will need to have the following installed 
 ## Setup
 To build and run the project, follow these steps:
 
-- Clone the repository: `git clone https://github.com/mtlon/HotelReviewApplication.git`
+- Clone the repository: git clone https://github.com/mtlon/HotelReviewApplication.git
 - Navigate to the project directory: cd HotelReviewApplication
+- Configure the database by setting up the PostgreSQL database:
+  - Start the PostgreSQL server.
+  - Create a new database named `hotel` by running the command: createdb hotel
+  - Set the login credentials for the database by adding the following lines to the application.properties file:
+  ```
+    spring.datasource.url=jdbc:postgresql://localhost:5432/hotel
+    spring.datasource.username=postgres
+    spring.datasource.password=password
+    spring.datasource.driver-class-name=org.postgresql.Driver
+  ```
+    - Be sure to replace the username and password variables with your own PostgreSQL credentials.
 - Build the project: mvn clean install
 - Run the project: mvn spring-boot:run
 
